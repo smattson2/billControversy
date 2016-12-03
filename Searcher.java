@@ -21,66 +21,66 @@ public class Searcher {
 	
 	private final void setControversyWords(){
 		this.controversyWords = new String[15];
-		controversyWords[0] = "divid";
-		controversyWords[1] = "divisi";
-		controversyWords[2] = "disagree";
-		controversyWords[3] = "polariz";
-		controversyWords[4] = "repeal";
-		controversyWords[5] = "stalemate";
-		controversyWords[6] = "gridlock";
-		controversyWords[7] = "standstill";
-		controversyWords[8] = "veto";
-		controversyWords[9] = "filibuster";
-		controversyWords[10] = "dysfunct";
-		controversyWords[11] = "deadlock";
-		controversyWords[12] = "ideological difference";
-		controversyWords[13] = "budget battle";
-		controversyWords[14] = "budgetary battle";
+		controversyWords[0] = " divid";
+		controversyWords[1] = " divisi";
+		controversyWords[2] = " disagree";
+		controversyWords[3] = " polariz";
+		controversyWords[4] = " repeal";
+		controversyWords[5] = " stalemate";
+		controversyWords[6] = " gridlock";
+		controversyWords[7] = " standstill";
+		controversyWords[8] = " veto";
+		controversyWords[9] = " filibuster";
+		controversyWords[10] = " dysfunct";
+		controversyWords[11] = " deadlock";
+		controversyWords[12] = " ideological difference";
+		controversyWords[13] = " budget battle";
+		controversyWords[14] = " budgetary battle";
 		//Delay/oppose bill removed for simplicity		
 	}
 	
 	private final void setStopWords(){
 		//Google stop words
-		this.controversyWords = new String[31];
-		stopWords[0] = "i"; 
-		stopWords[1] = "a"; 
-		stopWords[2] = "about"; 
-		stopWords[3] = "an"; 
-		stopWords[4] = "are"; 
-		stopWords[5] = "as"; 
-		stopWords[6] = "at"; 
-		stopWords[7] = "be"; 
-		stopWords[8] = "by"; 
-		stopWords[9] = "com"; 
-		stopWords[10] = "for"; 
-		stopWords[11] = "from";
-		stopWords[12] = "how";
-		stopWords[13] = "in"; 
-		stopWords[14] = "is"; 
-		stopWords[15] = "it"; 
-		stopWords[16] = "of"; 
-		stopWords[17] = "on"; 
-		stopWords[18] = "or"; 
-		stopWords[19] = "that";
-		stopWords[20] = "the"; 
-		stopWords[21] = "this";
-		stopWords[22] = "to"; 
-		stopWords[23] = "was"; 
-		stopWords[24] = "what"; 
-		stopWords[25] = "when";
-		stopWords[26] = "where";
-		stopWords[27] = "who"; 
-		stopWords[28] = "will"; 
-		stopWords[29] = "with";
-		stopWords[30] = "www";
+		this.stopWords = new String[31];
+		stopWords[0] = " i "; 
+		stopWords[1] = " a "; 
+		stopWords[2] = " about "; 
+		stopWords[3] = " an "; 
+		stopWords[4] = " are "; 
+		stopWords[5] = " as "; 
+		stopWords[6] = " at "; 
+		stopWords[7] = " be "; 
+		stopWords[8] = " by "; 
+		stopWords[9] = " com "; 
+		stopWords[10] = " for "; 
+		stopWords[11] = " from ";
+		stopWords[12] = " how ";
+		stopWords[13] = " in "; 
+		stopWords[14] = " is "; 
+		stopWords[15] = " it "; 
+		stopWords[16] = " of "; 
+		stopWords[17] = " on "; 
+		stopWords[18] = " or "; 
+		stopWords[19] = " that ";
+		stopWords[20] = " the "; 
+		stopWords[21] = " this ";
+		stopWords[22] = " to "; 
+		stopWords[23] = " was "; 
+		stopWords[24] = " what "; 
+		stopWords[25] = " when ";
+		stopWords[26] = " where ";
+		stopWords[27] = " who "; 
+		stopWords[28] = " will "; 
+		stopWords[29] = " with ";
+		stopWords[30] = " www ";
 	}
 	
 	private final String clean(String string) {
-		String stringChars = string.replace("[\\W&&\\S]+", "");
+		String stringChars = string.replaceAll("[\\W&&\\S]+", "");
 		String lowercase = stringChars.toLowerCase();
 		String noStopWords = lowercase;
 		for (int i = 0; i < stopWords.length; i++){
-			noStopWords = string.replace(stopWords[i], "");
+			noStopWords = noStopWords.replace(stopWords[i], " ");
 		}
 		return noStopWords;
 	}
@@ -97,7 +97,11 @@ public class Searcher {
 	 */
 	public boolean wordsMatchInOrder(String string){
 		String cleanString = clean(string);
-		return cleanText.contains(cleanString);
+		boolean toReturn = cleanText.contains(cleanString);
+		if(toReturn){
+//			System.out.println("Strict!!!");
+		}
+		return toReturn;
 	}
 	
 	/*
@@ -111,6 +115,7 @@ public class Searcher {
 				return false;
 			}
 		}
+	//	System.out.println("Medium!!");
 		return true;
 	}
 	
@@ -126,7 +131,11 @@ public class Searcher {
 				count++;
 			}
 		}
-		return (count / words.length) >= percent;
+		boolean toReturn = (count / words.length) >= percent;
+		if(toReturn){
+//			System.out.println("Easy!");
+		}
+		return toReturn;
 	}
 	
 	/*

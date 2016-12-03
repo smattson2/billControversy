@@ -75,7 +75,7 @@ public class NYT_ArchiveAPI_Puller {
 					TimeUnit.MILLISECONDS.sleep(300);
 				}
 			} */
-			writeURLtoFile(1984, 9, ".txt");
+			writeURLtoFile(1985, 2, ".txt");
 		}
 			
 		catch(Exception e){

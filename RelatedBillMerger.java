@@ -42,9 +42,11 @@ public class RelatedBillMerger {
 						break;
 			*/
 					case "supersedes":
+						System.out.println("Supersedes");
 						supersedes(otherBill.getBill_id());
 						break;
 					case "included-in":
+						System.out.println("Included in");
 						includedIn(otherBill.getBill_id());
 						break;
 					default:

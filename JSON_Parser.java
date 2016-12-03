@@ -88,14 +88,23 @@ public class JSON_Parser {
 
 	//Articles are in arrays by month.
 	public static List<Article> parseJsonIntoArticleList(String filename) throws IOException{
-		Gson gson = new Gson();
-		JsonReader reader = new JsonReader(new BufferedReader(new FileReader(filename)));
-		reader.setLenient(true);
-		Type type = new TypeToken<LinkedList<Article>>(){}.getType();
-		LinkedList<Article> list = gson.fromJson(reader, type);
-		System.out.println(filename);
-		reader.close();
-		return list;
+		LinkedList<Article> list = null;
+		try{
+			Gson gson = new Gson();
+			JsonReader reader = new JsonReader(new BufferedReader(new FileReader(filename)));
+			reader.setLenient(true);
+			Type type = new TypeToken<LinkedList<Article>>(){}.getType();
+			list = gson.fromJson(reader, type);
+		//	System.out.println(filename);
+			reader.close();
+		}
+		catch(com.google.gson.JsonSyntaxException e){
+			System.err.println(filename + ": JSON irregular");
+			System.err.println(e.getMessage());
+		}
+		finally{
+			return list;
+		}
 	}
 	
 	//I KNOW this is terrible, terrible form. But I must move on. :'(

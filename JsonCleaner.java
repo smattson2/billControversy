@@ -20,7 +20,7 @@ public class JsonCleaner {
 	public static void main(String[] args){
 		try {
 			//TODO: Magic numbers, args
-			for (int year = 2014; year <= 2014; year++){
+			for (int year = 1981; year <= 2014; year++){
 				for(int month = 1; month <= 12; month++)
 				cleanJson(directory + name + year + month + ".txt");	
 			}
@@ -45,8 +45,9 @@ public class JsonCleaner {
 			i++;
 		}
 		int closingBracketFromEnd = 3;
-		String toWrite = builder.substring(i, builder.length() - closingBracketFromEnd).toString();
-		
+		String string = builder.substring(i, builder.length() - closingBracketFromEnd).toString();
+	//	String string = builder.toString();
+		String toWrite = string.replace("headline\":[])", "headline\":null)");
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 		writer.write(toWrite);
 		writer.close();

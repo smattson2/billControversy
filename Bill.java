@@ -19,6 +19,12 @@ public class Bill {
 	//Added after--not from the bill JSONs
 	private transient int articleCount;
 	private transient int articleControversyCount;
+	private transient int moreRelaxedArticleCount;
+	private transient int moreRelaxedArticleControversyCount;
+	private transient int mostRelaxedArticleCount;
+	private transient int mostRelaxedArticleControversyCount;
+	
+	
 	private transient boolean shouldRemove = false;
 	
 	public Bill(){
@@ -38,26 +44,41 @@ public class Bill {
 		builder.append(',');
 		//Pipe delimited so titles all stay together in one column
 		//builder.append(titles.toString());
-		for(int i = 0; i < titles.length; i++){
+		//TODO: add back in. Commas messing up csv.
+/*		for(int i = 0; i < titles.length; i++){
 			builder.append(titles[i].getTitle());
 			builder.append("|");
 		}
 		builder.append(',');
-		builder.append(subject_top_term);
-		builder.append(',');
-		for(int i = 0; i < subjects.length; i++){
-			builder.append(subjects[i]);
-			builder.append('|');
-		}
-		builder.append(',');
+*/
 		builder.append(status);
 		builder.append(',');
 		builder.append(enacted());
 		builder.append(',');
 		builder.append(passed());
 		builder.append(',');
+		builder.append(subject_top_term);
+		builder.append(',');
+		//TODO: add back in.
+/*		
+		for(int i = 0; i < subjects.length; i++){
+			builder.append(subjects[i]);
+			builder.append('|');
+		}
+		builder.append(',');
+*/
+
 		builder.append(articleCount);
+		builder.append(',');
 		builder.append(articleControversyCount);
+		builder.append(',');
+		builder.append(moreRelaxedArticleCount);
+		builder.append(',');
+		builder.append(moreRelaxedArticleControversyCount);
+		builder.append(',');
+		builder.append(mostRelaxedArticleCount);
+		builder.append(',');
+		builder.append(mostRelaxedArticleControversyCount);
 		builder.append(System.lineSeparator());
 		
 		return builder.toString();
@@ -291,6 +312,38 @@ public class Bill {
 		}		
 	}
 */
+
+	public int getMoreRelaxedArticleCount() {
+		return moreRelaxedArticleCount;
+	}
+
+	public void setMoreRelaxedArticleCount(int moreRelaxedArticleCount) {
+		this.moreRelaxedArticleCount = moreRelaxedArticleCount;
+	}
+
+	public int getMoreRelaxedArticleControversyCount() {
+		return moreRelaxedArticleControversyCount;
+	}
+
+	public void setMoreRelaxedArticleControversyCount(int moreRelaxedArticleControversyCount) {
+		this.moreRelaxedArticleControversyCount = moreRelaxedArticleControversyCount;
+	}
+
+	public int getMostRelaxedArticleCount() {
+		return mostRelaxedArticleCount;
+	}
+
+	public void setMostRelaxedArticleCount(int mostRelaxedArticleCount) {
+		this.mostRelaxedArticleCount = mostRelaxedArticleCount;
+	}
+
+	public int getMostRelaxedArticleControversyCount() {
+		return mostRelaxedArticleControversyCount;
+	}
+
+	public void setMostRelaxedArticleControversyCount(int mostRelaxedArticleControversyCount) {
+		this.mostRelaxedArticleControversyCount = mostRelaxedArticleControversyCount;
+	}
 
 	public static class Title{
 		private String as;
