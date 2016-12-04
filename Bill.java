@@ -91,7 +91,8 @@ public class Bill {
 		else if(chamber.equals(Chamber.s)){
 			return "S. " + number;
 		}
-		else throw new IllegalStateException("Chamber must be hr or s!");
+		else {
+			throw new IllegalStateException("Chamber must be hr or s!");}
 	}
 	
 	//This returns an int instead of a boolean because it is going immediately to Stata.

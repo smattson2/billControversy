@@ -110,6 +110,7 @@ public class JSON_Parser {
 	//I KNOW this is terrible, terrible form. But I must move on. :'(
 	//Bills are in objects by bill.
 	public static Bill parseJsonIntoBill(String filename) throws IOException{
+//		System.out.println("Parsing");
 		Gson gson = new Gson();
 		JsonReader reader = new JsonReader(new BufferedReader(new FileReader(filename)));
 		reader.setLenient(true);

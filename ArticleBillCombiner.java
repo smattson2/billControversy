@@ -1,5 +1,6 @@
 package ArticleFetcher;
 
+import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -31,9 +32,9 @@ public class ArticleBillCombiner {
 	private static String windowsArticleDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
 	private static String articleFilename = "NYTarchive_";
 	private static String windowsOutputDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\output\\";
-	private static String linuxOutputDirectory = "/home/sem129/sem129/output/";
-	private static String linuxBillDirectory = "/home/sem129/sem129/govTrackJsons/";
-	private static String linuxArticleDirectory = "/home/sem129/sem129/NYT_raw/";
+	private static String linuxOutputDirectory = "../output/";
+	private static String linuxBillDirectory = "../govTrackJsons/";
+	private static String linuxArticleDirectory = "../NYT_raw/";
 	
 	public static void main(String[] args) {
 		if(args.length > 0){
@@ -251,6 +252,9 @@ public class ArticleBillCombiner {
 		}
 		catch(IOException e){
 			System.err.println(finalFilepath + " not found.");
+		}
+		catch(Exception e1){
+			System.err.println("It me. I'm broke. " + finalFilepath);
 		}
 		return billMap;
 	}
