@@ -24,7 +24,7 @@ public class JSON_Parser {
 	private static String directory = "C:\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
 	private static String name = "NYTarchive_";
 	private static String username = "sem129";
-	private static String password = "r1taSkeeter";
+	private static String password = "REDACTED_FOR_PUBLIC";
 	
 	public static void main(String[] args) {		
 		try {

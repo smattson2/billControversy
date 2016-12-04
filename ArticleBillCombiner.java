@@ -26,18 +26,23 @@ public class ArticleBillCombiner {
 	private static final int DECEMBER = 12;
 	private static final int TEMP_START_CONGRESS = 103;
 	
-	private static String billDirectory = "C:\\GovTrackData\\govTrackJsons\\";
-	private static String articleDirectory = "C:\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
+	private static boolean isWindows = false;
+	private static String windowsBillDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\govTrackJsons\\";
+	private static String windowsArticleDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
 	private static String articleFilename = "NYTarchive_";
-	private static String outputDirectory = "C:\\GovTrackData\\output\\";
+	private static String windowsOutputDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\output\\";
+	private static String linuxOutputDirectory = "output/";
+	private static String linuxBillDirectory = "govTrackJsons/";
+	private static String linuxArticleDirectory = "NYT_raw/";
 	
-
 	public static void main(String[] args) {
+		String system = args[0];
+		if(system.toLowerCase() == "windows"){
+			isWindows = true;
+		}
 		try{
-	//	int congress = Integer.valueOf(args[0]).intValue();
-			
-			//Temp values
-	for(int congress = /* FIRST_GOVTRACK_CONGRESS */ 98; congress <=  108; congress++){
+
+			for(int congress = FIRST_FULLTEXT_CONGRESS; congress < CURRENT_CONGRESS; congress++){
 			
 			/*
 			 * Iterable hash map.
@@ -48,38 +53,7 @@ public class ArticleBillCombiner {
 			LinkedHashMap<String, Bill> billsOfCongress = createBillMap(congress);
 			System.out.println(congress + "`s " + billsOfCongress.size() + " bills created at " + System.currentTimeMillis());
 			
-	/*		
-			 * Merges bills where one supersedes another, or one is included in another.
-			 
-
-			Set<Map.Entry<String, Bill>> set = billsOfCongress.entrySet();
-			//Copies titles of bill to delete into bill to keep.
-			//Flag all bills to be deleted on next iteration.
-			Iterator<Map.Entry<String, Bill>> iterator = set.iterator();
-			while(iterator.hasNext()){
-				Bill bill = iterator.next().getValue();
-				System.out.println(bill.getRelated_bills()[0].getReason());
-				RelatedBillMerger merger = new RelatedBillMerger(bill, billsOfCongress);
-				merger.mergeRelatedBills();
-			}
-			
-			//A second iteration is required to delete the bills because of the limitations of
-			//the data structure. Removing items from the map during iteration without using
-			//iterator.remove() causes unpredictable behavior.
-			//While this seems at first glance to be an oddly inefficient solution, as it loops twice,
-			//it is algorithmically faster than most other solutions because accessing a bill's
-			//related bills is O(1), and iteration is O(n).
-			Iterator<Map.Entry<String, Bill>> iterator2 = set.iterator();
-			while(iterator2.hasNext()){
-				Bill bill = iterator2.next().getValue();
-				if (bill.getShouldRemove()){
-					System.out.println("Removing.");
-					iterator2.remove();
-				}
-			}
-			
-			System.out.println(congress + "`s bills merged into " + billsOfCongress.size() + " bills at " + System.currentTimeMillis());
-*/
+	
 			/*
 			 * List of articles
 			 */
@@ -92,19 +66,29 @@ public class ArticleBillCombiner {
 			 * Adds article hit counts into the bill's data,
 			 * Then prints each congress's bill data into its own CSV for future use.
 			 */			
-			BufferedWriter writer = new BufferedWriter(new FileWriter(outputDirectory + congress + ".csv"));
+			BufferedWriter writer;
+			if(isWindows){
+				writer = new BufferedWriter(new FileWriter(windowsOutputDirectory + congress + ".csv"));
+			}
+			else writer = new BufferedWriter(new FileWriter(linuxOutputDirectory + congress + ".csv"));
 			Iterator<Bill> billIterator = billsOfCongress.values().iterator();
-						//Loop through one Congress worth of bills
+			//Loop through one Congress worth of bills
 			while(billIterator.hasNext()){
 				//Loop through one Congress worth of articles
 				Bill bill = billIterator.next();
 				trimTitles(bill);
 		//		System.out.println(bill.getBill_id());
-				Iterator<Article> articleIterator = articlesOfCongress.iterator();
-				while(articleIterator.hasNext()){
-					Article article = articleIterator.next();
+		//		Iterator<Article> articleIterator = articlesOfCongress.iterator();
+		//		while(articleIterator.hasNext()){
+		//			Article article = articleIterator.next();
+				Article[] articleArray = articlesOfCongress.toArray(new Article[articlesOfCongress.size()]);
+				// omp parallel for
+				for(int i = 0; i < articleArray.length; i++){
+					System.out.println("Thread #" + OMP4J_THREAD_NUM + "/" + OMP4J_NUM_THREADS);
+					Article article = articleArray[i];
 					if(JSON_Parser.appropriateMaterialType(article)){
-						searchArticle(bill, article);
+							searchArticle(bill, article);
+							System.out.println(article.get_id());
 					}
 				}
 				writer.append(bill.toCSV());
@@ -185,7 +169,10 @@ public class ArticleBillCombiner {
 		for(int year = year1; year < (year1 + 2); year++)
 			for (int month = JANUARY; month <= DECEMBER; month++){
 				StringBuilder builder = new StringBuilder();
-				builder.append(articleDirectory);
+				if (isWindows){
+					builder.append(windowsArticleDirectory);
+				}
+				else builder.append(linuxArticleDirectory);
 				builder.append(articleFilename);
 				builder.append(year);
 				builder.append(month);
@@ -204,9 +191,16 @@ public class ArticleBillCombiner {
 	
 	private static LinkedHashMap<String, Bill> createBillMap(int congress){
 		StringBuilder builder = new StringBuilder();
-		builder.append(billDirectory);
-		builder.append(congress);
-		builder.append("\\bills\\");
+		if(isWindows){
+			builder.append(windowsBillDirectory);
+			builder.append(congress);
+			builder.append("\\bills\\");
+		}
+		else {
+			builder.append(linuxBillDirectory);
+			builder.append(congress);
+			builder.append("/bills/");
+		}
 		String baseFilepath = builder.toString();
 		LinkedHashMap<String, Bill> billMap = new LinkedHashMap<String, Bill>();
 		
@@ -222,7 +216,11 @@ public class ArticleBillCombiner {
 	private static LinkedHashMap<String, Bill> addBillsFromChamber(LinkedHashMap<String, Bill> billMap, Bill.Chamber chamber, String baseFilepath) {
 		String finalFilepath = null;
 		try{
-			String houseFilepath = baseFilepath + chamber.toString() + "\\";
+			String houseFilepath;
+			if(isWindows){
+				houseFilepath = baseFilepath + chamber.toString() + "\\";
+			}
+			else houseFilepath = baseFilepath + chamber.toString() + "/";
 			File houseDirectory = new File(houseFilepath);
 			String[] inHouseDirectory = houseDirectory.list();
 			//Numbering starts at 1
@@ -231,7 +229,10 @@ public class ArticleBillCombiner {
 				buildFinalFile.append(houseFilepath);
 				buildFinalFile.append(chamber);
 				buildFinalFile.append(i);
-				buildFinalFile.append("\\data.json");	
+				if(isWindows){
+					buildFinalFile.append("\\data.json");	
+				}
+				else buildFinalFile.append("/data.json");
 				finalFilepath = buildFinalFile.toString();
 				Bill bill = JSON_Parser.parseJsonIntoBill(finalFilepath);
 				addBillNumberAsTitle(bill);
