@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class JsonCleaner {
 	
-	private static String directory = "C:\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
+	private static String directory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
 	private static String name = "NYTarchive_";
 	
 	public static void main(String[] args){
@@ -41,13 +41,13 @@ public class JsonCleaner {
 		}
 		reader.close();
 		int i = 0;
-		while(builder.charAt(i) != '['){
+/*		while(builder.charAt(i) != '['){
 			i++;
 		}
 		int closingBracketFromEnd = 3;
-		String string = builder.substring(i, builder.length() - closingBracketFromEnd).toString();
-	//	String string = builder.toString();
-		String toWrite = string.replace("headline\":[])", "headline\":null)");
+		String string = builder.substring(i, builder.length() - closingBracketFromEnd).toString(); */
+		String string = builder.toString();
+		String toWrite = string.replace("headline\":[]", "headline\":null");
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 		writer.write(toWrite);
 		writer.close();

@@ -26,7 +26,7 @@ public class ArticleBillCombiner {
 	private static final int DECEMBER = 12;
 	private static final int TEMP_START_CONGRESS = 103;
 	
-	private static boolean isWindows = false;
+	private static boolean isWindows = true;
 	private static String windowsBillDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\govTrackJsons\\";
 	private static String windowsArticleDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
 	private static String articleFilename = "NYTarchive_";
@@ -63,7 +63,7 @@ public class ArticleBillCombiner {
 
 			LinkedList<Article> articlesOfCongress = createArticleList(congress);
 			
-			System.out.println(congress + "`s " + articlesOfCongress.size() + " articles created: " + System.currentTimeMillis());
+			System.out.println(congress + "`s " + articlesOfCongress.size() + " articles created: " + System.currentTimeMillis());		
 			
 			/*
 			 * Adds article hit counts into the bill's data,
@@ -85,12 +85,13 @@ public class ArticleBillCombiner {
 		//		while(articleIterator.hasNext()){
 		//			Article article = articleIterator.next();
 				Article[] articleArray = articlesOfCongress.toArray(new Article[articlesOfCongress.size()]);
-
+				// omp parallel for
 				for(int i = 0; i < articleArray.length; i++){
 					Article article = articleArray[i];
-					Runnable r = new MyThread(bill, article);
-					new Thread(r).start();
+					//Runnable r = new MyThread(bill, article);
+					//new Thread(r).start();
 					//System.out.println(r.toString());
+					searchInParallel(bill, article);
 				}
 				writer.append(bill.toCSV());
 			}
