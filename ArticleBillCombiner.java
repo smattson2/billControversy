@@ -28,6 +28,7 @@ public class ArticleBillCombiner {
 	private static final int TEMP_START_CONGRESS = 103;
 	
 	private static boolean isWindows = false;
+	private static boolean isFull;
 	private static String windowsBillDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\govTrackJsons\\";
 	private static String windowsArticleDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
 	private static String articleFilename = "NYTarchive_";
@@ -37,8 +38,19 @@ public class ArticleBillCombiner {
 	private static String linuxArticleDirectory = "../NYT_raw/";
 	
 	public static void main(String[] args) {
-		if(args.length > 0){
-			String system = args[0];
+		if(args.length == 0){
+			throw new IllegalArgumentException("Please specify short (first and last congress) or full (all congresses).");
+		}
+		if(args[0].toLowerCase().equals("short")){
+			isFull = false;
+		}
+		else if(args[0].toLowerCase().equals("full")){
+			isFull = true;
+		}
+		else throw new IllegalArgumentException("Please specify short (first and last congress) or full (all congresses).");
+		
+		if(args.length > 1){
+			String system = args[1];
 			if(system != null && system.toLowerCase() == "windows"){
 				isWindows = true;
 			}
@@ -47,68 +59,76 @@ public class ArticleBillCombiner {
 		try{
 
 			System.out.println("Hello I am start.");
-
-			for(int congress = FIRST_FULLTEXT_CONGRESS; congress < CURRENT_CONGRESS; congress++){
-			
-			/*
-			 * Iterable hash map.
-			 * This data structure chosen for the ability to quickly find bills by key (for merging)
-			 * and also its iterability. It is essentially a hash table with a linked list of keys.
-			 */
-			
-			LinkedHashMap<String, Bill> billsOfCongress = createBillMap(congress);
-			System.out.println(congress + "`s " + billsOfCongress.size() + " bills created at " + System.currentTimeMillis());
-			
-	
-			/*
-			 * List of articles
-			 */
-
-			LinkedList<Article> articlesOfCongress = createArticleList(congress);
-			
-			System.out.println(congress + "`s " + articlesOfCongress.size() + " articles created: " + System.currentTimeMillis());		
-			
-			/*
-			 * Adds article hit counts into the bill's data,
-			 * Then prints each congress's bill data into its own CSV for future use.
-			 */			
-			BufferedWriter writer;
-			if(isWindows){
-				writer = new BufferedWriter(new FileWriter(windowsOutputDirectory + congress + ".csv"));
-			}
-			else writer = new BufferedWriter(new FileWriter(linuxOutputDirectory + congress + ".csv"));
-			Iterator<Bill> billIterator = billsOfCongress.values().iterator();
-			//Loop through one Congress worth of bills
-			while(billIterator.hasNext()){
-				//Loop through one Congress worth of articles
-				Bill bill = billIterator.next();
-				trimTitles(bill);
-		//		System.out.println(bill.getBill_id());
-		//		Iterator<Article> articleIterator = articlesOfCongress.iterator();
-		//		while(articleIterator.hasNext()){
-		//			Article article = articleIterator.next();
-				Article[] articleArray = articlesOfCongress.toArray(new Article[articlesOfCongress.size()]);
-				// omp parallel for
-				for(int i = 0; i < articleArray.length; i++){
-					Article article = articleArray[i];
-					//Runnable r = new MyThread(bill, article);
-					//new Thread(r).start();
-					//System.out.println(r.toString());
-					searchInParallel(bill, article);
+			if(isFull){
+				for(int congress = FIRST_FULLTEXT_CONGRESS; congress < CURRENT_CONGRESS; congress++){
+					execute(congress);
 				}
-				writer.append(bill.toCSV());
 			}
-			System.out.println("CSV for " + congress + "created: " + System.currentTimeMillis());
-			writer.close();
-
+			else{
+				execute(FIRST_FULLTEXT_CONGRESS);
+				execute(CURRENT_CONGRESS - 1);
+			}
+			
 			
 			System.out.println("Done: " + System.currentTimeMillis());
-		}
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
 
+	}
+
+	private static void execute(int congress) throws IOException {
+		/*
+		 * Iterable hash map.
+		 * This data structure chosen for the ability to quickly find bills by key (for merging)
+		 * and also its iterability. It is essentially a hash table with a linked list of keys.
+		 */
+		
+		LinkedHashMap<String, Bill> billsOfCongress = createBillMap(congress);
+		System.out.println(congress + "`s " + billsOfCongress.size() + " bills created at " + System.currentTimeMillis());
+		
+
+		/*
+		 * List of articles
+		 */
+
+		LinkedList<Article> articlesOfCongress = createArticleList(congress);
+		
+		System.out.println(congress + "`s " + articlesOfCongress.size() + " articles created: " + System.currentTimeMillis());		
+		
+		/*
+		 * Adds article hit counts into the bill's data,
+		 * Then prints each congress's bill data into its own CSV for future use.
+		 */			
+		BufferedWriter writer;
+		if(isWindows){
+			writer = new BufferedWriter(new FileWriter(windowsOutputDirectory + congress + ".csv"));
+		}
+		else writer = new BufferedWriter(new FileWriter(linuxOutputDirectory + congress + ".csv"));
+		Iterator<Bill> billIterator = billsOfCongress.values().iterator();
+		//Loop through one Congress worth of bills
+		while(billIterator.hasNext()){
+			//Loop through one Congress worth of articles
+			Bill bill = billIterator.next();
+			trimTitles(bill);
+//		System.out.println(bill.getBill_id());
+//		Iterator<Article> articleIterator = articlesOfCongress.iterator();
+//		while(articleIterator.hasNext()){
+//			Article article = articleIterator.next();
+			Article[] articleArray = articlesOfCongress.toArray(new Article[articlesOfCongress.size()]);
+			// omp parallel for
+			for(int i = 0; i < articleArray.length; i++){
+				Article article = articleArray[i];
+				//Runnable r = new MyThread(bill, article);
+				//new Thread(r).start();
+				//System.out.println(r.toString());
+				searchInParallel(bill, article);
+			}
+			writer.append(bill.toCSV());
+		}
+		System.out.println("CSV for " + congress + "created: " + System.currentTimeMillis());
+		writer.close();
 	}
 
 	public static void searchInParallel(Bill bill, Article article) {
