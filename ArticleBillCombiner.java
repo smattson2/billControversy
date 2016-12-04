@@ -26,14 +26,14 @@ public class ArticleBillCombiner {
 	private static final int DECEMBER = 12;
 	private static final int TEMP_START_CONGRESS = 103;
 	
-	private static boolean isWindows = true;
+	private static boolean isWindows = false;
 	private static String windowsBillDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\govTrackJsons\\";
 	private static String windowsArticleDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
 	private static String articleFilename = "NYTarchive_";
 	private static String windowsOutputDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\output\\";
-	private static String linuxOutputDirectory = "output/";
-	private static String linuxBillDirectory = "govTrackJsons/";
-	private static String linuxArticleDirectory = "NYT_raw/";
+	private static String linuxOutputDirectory = "/home/sem129/sem129/output/";
+	private static String linuxBillDirectory = "/home/sem129/sem129/govTrackJsons/";
+	private static String linuxArticleDirectory = "/home/sem129/sem129/NYT_raw/";
 	
 	public static void main(String[] args) {
 		if(args.length > 0){
@@ -44,6 +44,8 @@ public class ArticleBillCombiner {
 		}
 
 		try{
+
+			System.out.println("Hello I am start.");
 
 			for(int congress = FIRST_FULLTEXT_CONGRESS; congress < CURRENT_CONGRESS; congress++){
 			
