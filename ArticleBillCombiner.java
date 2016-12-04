@@ -36,10 +36,13 @@ public class ArticleBillCombiner {
 	private static String linuxArticleDirectory = "NYT_raw/";
 	
 	public static void main(String[] args) {
-		String system = args[0];
-		if(system != null && system.toLowerCase() == "windows"){
-			isWindows = true;
+		if(args.length > 0){
+			String system = args[0];
+			if(system != null && system.toLowerCase() == "windows"){
+				isWindows = true;
+			}
 		}
+
 		try{
 
 			for(int congress = FIRST_FULLTEXT_CONGRESS; congress < CURRENT_CONGRESS; congress++){
@@ -82,14 +85,12 @@ public class ArticleBillCombiner {
 		//		while(articleIterator.hasNext()){
 		//			Article article = articleIterator.next();
 				Article[] articleArray = articlesOfCongress.toArray(new Article[articlesOfCongress.size()]);
-				// omp parallel for
+
 				for(int i = 0; i < articleArray.length; i++){
-					System.out.println("Thread #" + OMP4J_THREAD_NUM + "/" + OMP4J_NUM_THREADS);
 					Article article = articleArray[i];
-					if(JSON_Parser.appropriateMaterialType(article)){
-							searchArticle(bill, article);
-							System.out.println(article.get_id());
-					}
+					Runnable r = new MyThread(bill, article);
+					new Thread(r).start();
+					//System.out.println(r.toString());
 				}
 				writer.append(bill.toCSV());
 			}
@@ -104,6 +105,12 @@ public class ArticleBillCombiner {
 			e.printStackTrace();
 		}
 
+	}
+
+	public static void searchInParallel(Bill bill, Article article) {
+		if(JSON_Parser.appropriateMaterialType(article)){
+			searchArticle(bill, article);
+		}
 	}
 
 	private static void searchArticle(Bill bill, Article article) {
