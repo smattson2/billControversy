@@ -37,7 +37,7 @@ public class ArticleBillCombiner {
 	
 	public static void main(String[] args) {
 		String system = args[0];
-		if(system.toLowerCase() == "windows"){
+		if(system != null && system.toLowerCase() == "windows"){
 			isWindows = true;
 		}
 		try{
