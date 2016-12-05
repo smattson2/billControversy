@@ -28,7 +28,10 @@ public class ArticleBillCombiner {
 	private static final int TEMP_START_CONGRESS = 103;
 	
 	private static boolean isWindows = false;
-	private static boolean isFull;
+	private static boolean isFull = false;
+	private static boolean isFirst = false;
+	private static boolean isLast = false;
+	private static boolean isShort = false;
 	private static String windowsBillDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\govTrackJsons\\";
 	private static String windowsArticleDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
 	private static String articleFilename = "NYTarchive_";
@@ -42,10 +45,16 @@ public class ArticleBillCombiner {
 			throw new IllegalArgumentException("Please specify short (first and last congress) or full (all congresses).");
 		}
 		if(args[0].toLowerCase().equals("short")){
-			isFull = false;
+			isShort = true;
 		}
-		else if(args[0].toLowerCase().equals("full")){
+		if(args[0].toLowerCase().equals("full")){
 			isFull = true;
+		}
+		if(args[0].equals("first")){
+			isFirst = true;
+		}
+		if(args[0].equals("last")){
+			isLast = true;
 		}
 		else throw new IllegalArgumentException("Please specify short (first and last congress) or full (all congresses).");
 		
@@ -64,8 +73,14 @@ public class ArticleBillCombiner {
 					execute(congress);
 				}
 			}
-			else{
+			else if(isShort){
 				execute(FIRST_FULLTEXT_CONGRESS);
+				execute(CURRENT_CONGRESS - 1);
+			}
+			else if(isFirst){
+				execute(FIRST_FULLTEXT_CONGRESS);
+			}
+			else if(isLast){
 				execute(CURRENT_CONGRESS - 1);
 			}
 			
