@@ -44,16 +44,16 @@ public class ArticleBillCombiner {
 		if(args.length == 0){
 			throw new IllegalArgumentException("Please specify short (first and last congress) or full (all congresses).");
 		}
-		if(args[0].toLowerCase().equals("short")){
+		else if(args[0].toLowerCase().equals("short")){
 			isShort = true;
 		}
-		if(args[0].toLowerCase().equals("full")){
+		else if(args[0].toLowerCase().equals("full")){
 			isFull = true;
 		}
-		if(args[0].equals("first")){
+		else if(args[0].equals("first")){
 			isFirst = true;
 		}
-		if(args[0].equals("last")){
+		else if(args[0].equals("last")){
 			isLast = true;
 		}
 		else throw new IllegalArgumentException("Please specify short (first and last congress) or full (all congresses).");
