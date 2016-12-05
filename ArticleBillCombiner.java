@@ -32,6 +32,7 @@ public class ArticleBillCombiner {
 	private static boolean isFirst = false;
 	private static boolean isLast = false;
 	private static boolean isShort = false;
+	//private static boolean is113 = false;
 	private static String windowsBillDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\govTrackJsons\\";
 	private static String windowsArticleDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
 	private static String articleFilename = "NYTarchive_";
@@ -56,6 +57,7 @@ public class ArticleBillCombiner {
 		else if(args[0].equals("last")){
 			isLast = true;
 		}
+
 		else throw new IllegalArgumentException("Please specify short (first and last congress) or full (all congresses).");
 		
 		if(args.length > 1){
@@ -83,7 +85,6 @@ public class ArticleBillCombiner {
 			else if(isLast){
 				execute(CURRENT_CONGRESS - 1);
 			}
-			
 			
 			System.out.println("Done: " + System.currentTimeMillis());
 		}
@@ -119,6 +120,9 @@ public class ArticleBillCombiner {
 		BufferedWriter writer;
 		if(isWindows){
 			writer = new BufferedWriter(new FileWriter(windowsOutputDirectory + congress + ".csv"));
+		}
+		if(isLast){
+			writer = new BufferedWriter(new FileWriter(windowsOutputDirectory + congress + "_fixed.csv"));
 		}
 		else writer = new BufferedWriter(new FileWriter(linuxOutputDirectory + congress + ".csv"));
 		Iterator<Bill> billIterator = billsOfCongress.values().iterator();
@@ -269,20 +273,38 @@ public class ArticleBillCombiner {
 			else houseFilepath = baseFilepath + chamber.toString() + "/";
 			File houseDirectory = new File(houseFilepath);
 			String[] inHouseDirectory = houseDirectory.list();
-			//Numbering starts at 1
-			for (int i = 1; i <= inHouseDirectory.length; i++){
-				StringBuilder buildFinalFile = new StringBuilder();
-				buildFinalFile.append(houseFilepath);
-				buildFinalFile.append(chamber);
-				buildFinalFile.append(i);
-				if(isWindows){
-					buildFinalFile.append("\\data.json");	
+			//Numbering starts at 1, except in the house of congress 113 because reasons?
+			if (isLast && chamber.equals(Bill.Chamber.hr)){
+				for (int i = 20; i <= inHouseDirectory.length; i++){
+					StringBuilder buildFinalFile = new StringBuilder();
+					buildFinalFile.append(houseFilepath);
+					buildFinalFile.append(chamber);
+					buildFinalFile.append(i);
+					if(isWindows){
+						buildFinalFile.append("\\data.json");	
+					}
+					else buildFinalFile.append("/data.json");
+					finalFilepath = buildFinalFile.toString();
+					Bill bill = JSON_Parser.parseJsonIntoBill(finalFilepath);
+					addBillNumberAsTitle(bill);
+					billMap.put(bill.getBill_id(), bill);
 				}
-				else buildFinalFile.append("/data.json");
-				finalFilepath = buildFinalFile.toString();
-				Bill bill = JSON_Parser.parseJsonIntoBill(finalFilepath);
-				addBillNumberAsTitle(bill);
-				billMap.put(bill.getBill_id(), bill);
+			}
+			else{
+				for (int i = 1; i <= inHouseDirectory.length; i++){
+					StringBuilder buildFinalFile = new StringBuilder();
+					buildFinalFile.append(houseFilepath);
+					buildFinalFile.append(chamber);
+					buildFinalFile.append(i);
+					if(isWindows){
+						buildFinalFile.append("\\data.json");	
+					}
+					else buildFinalFile.append("/data.json");
+					finalFilepath = buildFinalFile.toString();
+					Bill bill = JSON_Parser.parseJsonIntoBill(finalFilepath);
+					addBillNumberAsTitle(bill);
+					billMap.put(bill.getBill_id(), bill);
+				}
 			}
 		}
 		catch(IOException e){
