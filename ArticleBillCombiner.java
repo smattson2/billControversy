@@ -32,6 +32,7 @@ public class ArticleBillCombiner {
 	private static boolean isFirst = false;
 	private static boolean isLast = false;
 	private static boolean isShort = false;
+	private static int number = 0;
 	//private static boolean is113 = false;
 	private static String windowsBillDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\govTrackJsons\\";
 	private static String windowsArticleDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
@@ -57,8 +58,10 @@ public class ArticleBillCombiner {
 		else if(args[0].equals("last")){
 			isLast = true;
 		}
-
-		else throw new IllegalArgumentException("Please specify short (first and last congress) or full (all congresses).");
+		else if(isValidInteger(args[0])){
+			number = Integer.valueOf(args[0]).intValue();
+		}
+		else throw new IllegalArgumentException("Specify short, full, first, last, or a number between 97 and 113, inclusive.");
 		
 		if(args.length > 1){
 			String system = args[1];
@@ -85,13 +88,30 @@ public class ArticleBillCombiner {
 			else if(isLast){
 				execute(CURRENT_CONGRESS - 1);
 			}
-			
+			else if(number > 0){
+				execute(number);
+			}
 			System.out.println("Done: " + System.currentTimeMillis());
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
 
+	}
+	
+	private static boolean isValidInteger(String arg){
+		int i;
+		try{
+			Integer in = Integer.valueOf(arg);
+			i = in.intValue();
+		}
+		catch(NumberFormatException e){
+			return false;
+		}
+		if(i >= FIRST_FULLTEXT_CONGRESS && i < CURRENT_CONGRESS){
+			return true;
+		}
+		return false;
 	}
 
 	private static void execute(int congress) throws IOException {
