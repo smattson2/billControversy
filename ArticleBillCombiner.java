@@ -32,6 +32,7 @@ public class ArticleBillCombiner {
 	private static boolean isFirst = false;
 	private static boolean isLast = false;
 	private static boolean isShort = false;
+	private static boolean senate = false;
 	private static int number = 0;
 	//private static boolean is113 = false;
 	private static String windowsBillDirectory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\govTrackJsons\\";
@@ -64,10 +65,13 @@ public class ArticleBillCombiner {
 		else throw new IllegalArgumentException("Specify short, full, first, last, or a number between 97 and 113, inclusive.");
 		
 		if(args.length > 1){
-			String system = args[1];
-			if(system != null && system.toLowerCase().equals("windows")){
+			String argsOne = args[1];
+			if(argsOne != null && argsOne.toLowerCase().equals("windows")){
 				isWindows = true;
 			}
+			if(argsOne != null && argsOne.toLowerCase().equals("senate")){
+                                senate = true;
+                        }
 		}
 
 		try{
@@ -276,7 +280,9 @@ public class ArticleBillCombiner {
 		LinkedHashMap<String, Bill> billMap = new LinkedHashMap<String, Bill>();
 		
 		//For house
-		billMap = addBillsFromChamber(billMap, Bill.Chamber.hr, baseFilepath);
+		if(!senate){
+			billMap = addBillsFromChamber(billMap, Bill.Chamber.hr, baseFilepath);
+		}
 		billMap = addBillsFromChamber(billMap, Bill.Chamber.s, baseFilepath);
 		
 		System.out.println("Bill Map " + congress + " added.");
@@ -296,7 +302,7 @@ public class ArticleBillCombiner {
 			String[] inHouseDirectory = houseDirectory.list();
 			//Numbering starts at 1, except in the house of congress 113 because reasons?
 			if ((isLast || number > 109)&& chamber.equals(Bill.Chamber.hr)){
-				for (int i = 20; i <= inHouseDirectory.length; i++){
+				for (int i = 21; i <= inHouseDirectory.length; i++){
 					StringBuilder buildFinalFile = new StringBuilder();
 					buildFinalFile.append(houseFilepath);
 					buildFinalFile.append(chamber);
@@ -327,7 +333,7 @@ public class ArticleBillCombiner {
 					addBillNumberAsTitle(bill);
 					billMap.put(bill.getBill_id(), bill);
 				}
-				System.out.println(chamber + ": " + i);
+			//	System.out.println(chamber + ": " + i);
 			}
 		}
 		catch(IOException e){

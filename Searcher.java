@@ -132,7 +132,7 @@ public class Searcher {
 			}
 		}
 		boolean toReturn = ((double) count / (double) words.length) >= percent;
-		System.out.println((double) count / (double) words.length);
+//		System.out.println((double) count / (double) words.length);
 		if(toReturn){
 //			System.out.println("Easy!");
 		}
@@ -156,9 +156,9 @@ public class Searcher {
 	private final void setControversial(){
 		Loop:
 		for (int i = 0; i < controversyWords.length; i++){
-			System.out.println(controversyWords[i]);
+//			System.out.println(controversyWords[i]);
 			if(cleanText.contains(controversyWords[i])){
-				System.out.println("found");
+//				System.out.println("found");
 				this.controversial = true;
 				return;
 			}
