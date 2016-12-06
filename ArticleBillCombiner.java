@@ -65,7 +65,7 @@ public class ArticleBillCombiner {
 		
 		if(args.length > 1){
 			String system = args[1];
-			if(system != null && system.toLowerCase() == "windows"){
+			if(system != null && system.toLowerCase().equals("windows")){
 				isWindows = true;
 			}
 		}
@@ -131,8 +131,9 @@ public class ArticleBillCombiner {
 
 		LinkedList<Article> articlesOfCongress = createArticleList(congress);
 		
-		System.out.println(congress + "`s " + articlesOfCongress.size() + " articles created: " + System.currentTimeMillis());		
+		System.out.println(congress + "`s " + articlesOfCongress.size() + " articles created: " + System.currentTimeMillis());	
 		
+	
 		/*
 		 * Adds article hit counts into the bill's data,
 		 * Then prints each congress's bill data into its own CSV for future use.
@@ -167,7 +168,7 @@ public class ArticleBillCombiner {
 			writer.append(bill.toCSV());
 		}
 		System.out.println("CSV for " + congress + "created: " + System.currentTimeMillis());
-		writer.close();
+		writer.close(); 
 	}
 
 	public static void searchInParallel(Bill bill, Article article) {
@@ -294,7 +295,7 @@ public class ArticleBillCombiner {
 			File houseDirectory = new File(houseFilepath);
 			String[] inHouseDirectory = houseDirectory.list();
 			//Numbering starts at 1, except in the house of congress 113 because reasons?
-			if (isLast && chamber.equals(Bill.Chamber.hr)){
+			if ((isLast || number > 109)&& chamber.equals(Bill.Chamber.hr)){
 				for (int i = 20; i <= inHouseDirectory.length; i++){
 					StringBuilder buildFinalFile = new StringBuilder();
 					buildFinalFile.append(houseFilepath);
@@ -311,7 +312,8 @@ public class ArticleBillCombiner {
 				}
 			}
 			else{
-				for (int i = 1; i <= inHouseDirectory.length; i++){
+				int i;
+				for (i = 1; i <= inHouseDirectory.length; i++){
 					StringBuilder buildFinalFile = new StringBuilder();
 					buildFinalFile.append(houseFilepath);
 					buildFinalFile.append(chamber);
@@ -325,6 +327,7 @@ public class ArticleBillCombiner {
 					addBillNumberAsTitle(bill);
 					billMap.put(bill.getBill_id(), bill);
 				}
+				System.out.println(chamber + ": " + i);
 			}
 		}
 		catch(IOException e){
