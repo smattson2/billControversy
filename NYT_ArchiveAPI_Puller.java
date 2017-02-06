@@ -15,7 +15,7 @@ public class NYT_ArchiveAPI_Puller {
 	private static int FIRST_YEAR = 1851;
 	private static String apiURLbase = "http://api.nytimes.com/svc/archive/v1/";
 	private static String apiURLend = ".json?api-key=";
-	private static String apiKey = "76d2d33e9c6e41fa9de677e72ec71b66";
+	private static String apiKey = "REDACTED";
 	private static String directory = "C:\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
 	private static String name = "NYTarchive_";
 	//private static int[] years = {1973, 1974, 2013, 2014};
