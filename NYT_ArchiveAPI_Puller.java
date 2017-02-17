@@ -9,7 +9,7 @@ public class NYT_ArchiveAPI_Puller {
 	
 	private static final int DECEMBER = 12;
 	private static final int JANUARY = 1;
-	private static int CURRENT_YEAR = 2016;
+	private static int CURRENT_YEAR = 2017;
 	private static int FIRST_FULLTEXT_YEAR = 1981;
 	private static int FIRST_GOVTRACK_YEAR = 1973;
 	private static int FIRST_YEAR = 1851;
@@ -18,8 +18,6 @@ public class NYT_ArchiveAPI_Puller {
 	private static String apiKey = "REDACTED";
 	private static String directory = "C:\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
 	private static String name = "NYTarchive_";
-	//private static int[] years = {1973, 1974, 2013, 2014};
-	//private static int[] years = {1981, 1982};
 	
 	private static String urlBuilder(int year, int month){
 		validateDate(year, month);
@@ -35,7 +33,6 @@ public class NYT_ArchiveAPI_Puller {
 	
 	private static void writeURLtoFile(int year, int month, String fileType) throws IOException{
 		validateDate(year, month);
-		//String filename = directory + name + String.valueOf(year) + String.valueOf(month) + ".txt";
 		String filename = directory + name + String.valueOf(year) + String.valueOf(month) + fileType;
 		
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
@@ -49,6 +46,7 @@ public class NYT_ArchiveAPI_Puller {
 		
 		reader.close();
 		writer.close();
+		JsonCleaner.cleanJson(filename);
 	}
 	
 	private static void validateDate(int year, int month){
@@ -59,29 +57,24 @@ public class NYT_ArchiveAPI_Puller {
 			throw new IllegalArgumentException("Years should be between " + String.valueOf(FIRST_YEAR) + " and " + String.valueOf(CURRENT_YEAR));
 		}
 		if (year < FIRST_FULLTEXT_YEAR){
-//			System.err.println("NOTE: Results from this year may not have full text. Try 1981 or after.\n");
+			System.err.println("NOTE: Results from this year may not have full text. Try 1981 or after.\n");
+		}
+		if (year < FIRST_GOVTRACK_YEAR){
+			System.err.println("NOTE: Years before 1973 may not have complete bill data available.\n");
 		}
 	}
 
 	public static void main(String[] args) {
-		//TODO: Should take args
-		try{
-			//for(int yearIndex = 0; yearIndex < years.length; yearIndex++){
-	/*		for(int year = 1979; year < FIRST_FULLTEXT_YEAR; year++){
-				for(int month = JANUARY; month <= DECEMBER; month++){
-					//writeURLtoFile(years[yearIndex], month, ".txt");
-					//writeURLtoFile(years[yearIndex], month, ".json");
-					writeURLtoFile(year, month, ".txt");
-					TimeUnit.MILLISECONDS.sleep(300);
-				}
-			} */
-			writeURLtoFile(1985, 2, ".txt");
+		if(args.length == 2){
+			pullArticlesBetweenYears(Integer.valueOf(args[0]).intValue(), Integer.valueOf(args[1]).intValue());
 		}
-			
-		catch(Exception e){
-			System.err.println(e.getMessage());
+		else if(args.length == 1){
+			pullArticlesBetweenYears(Integer.valueOf(args[0]).intValue(), 2016);
 		}
-		
+		else{
+			pullArticlesBetweenYears(1981, 2016);
+		}
+				
 		//To test
 	
 		/*
@@ -94,6 +87,22 @@ public class NYT_ArchiveAPI_Puller {
 		}
 		
 		*/
+	}
+
+	private static void pullArticlesBetweenYears(int firstYear, int lastYear) {
+		try{
+			//for(int yearIndex = 0; yearIndex < years.length; yearIndex++){
+			for(int year = firstYear; year < firstYear; year++){
+				for(int month = JANUARY; month <= DECEMBER; month++){
+					writeURLtoFile(year, month, ".txt");
+					TimeUnit.MILLISECONDS.sleep(300);
+				}
+			} 
+		}
+			
+		catch(Exception e){
+			System.err.println(e.getMessage());
+		}
 	}
 
 }

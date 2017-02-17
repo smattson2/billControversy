@@ -45,7 +45,7 @@ public class ArticleBillCombiner {
 	
 	public static void main(String[] args) {
 		if(args.length == 0){
-			throw new IllegalArgumentException("Please specify short (first and last congress) or full (all congresses).");
+			throw new IllegalArgumentException("Specify short, full, first, last, or a number between 97 and 113, inclusive.");
 		}
 		else if(args[0].toLowerCase().equals("short")){
 			isShort = true;
@@ -117,6 +117,7 @@ public class ArticleBillCombiner {
 		}
 		return false;
 	}
+	
 
 	private static void execute(int congress) throws IOException {
 		/*
@@ -174,7 +175,16 @@ public class ArticleBillCombiner {
 		System.out.println("CSV for " + congress + "created: " + System.currentTimeMillis());
 		writer.close(); 
 	}
-
+	/*
+	private static void countDepVar(int congress, LinkedHashMap<String, Bill> billsOfCongress)
+		int allBills = billsOfCongress.length();
+		int enactedBills;
+		int passedBills;
+		for (int i = 0; i < allBills; i++){
+			if(billsOfCongress.valueAt(i) )
+	//TODO
+	}
+*/
 	public static void searchInParallel(Bill bill, Article article) {
 		if(JSON_Parser.appropriateMaterialType(article)){
 			searchArticle(bill, article);

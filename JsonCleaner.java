@@ -17,6 +17,12 @@ public class JsonCleaner {
 	private static String directory = "C:\\cygwin64\\home\\sem129\\GovTrackData\\ArticleBillDatabase\\ArticleBillDatabase\\NYT_raw\\";
 	private static String name = "NYTarchive_";
 	
+	/*
+	 * Update 2/17/17: No longer an executable on its own. Instead, called by NYT_ArchiveAPI_Puller.
+	 * 		It makes substantially more sense there, to ensure it is run exactly once on each article.
+	 */
+	
+	/*
 	public static void main(String[] args){
 		try {
 			//TODO: Magic numbers, args
@@ -29,7 +35,8 @@ public class JsonCleaner {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
-	}
+	} 
+	*/
 	
 	public static void cleanJson(String filename) throws IOException{
 		BufferedReader reader = new BufferedReader(new FileReader(filename));
@@ -41,12 +48,12 @@ public class JsonCleaner {
 		}
 		reader.close();
 		int i = 0;
-/*		while(builder.charAt(i) != '['){
+		while(builder.charAt(i) != '['){
 			i++;
 		}
 		int closingBracketFromEnd = 3;
-		String string = builder.substring(i, builder.length() - closingBracketFromEnd).toString(); */
-		String string = builder.toString();
+		String string = builder.substring(i, builder.length() - closingBracketFromEnd).toString(); 
+//		String string = builder.toString();
 		String toWrite = string.replace("headline\":[]", "headline\":null");
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 		writer.write(toWrite);
