@@ -2,6 +2,9 @@ package ArticleFetcher;
 
 public class MyThread implements Runnable {
 	
+	//DEPRECATED
+	
+	/*
 	private final int congress;
 	
 	public MyThread(int congress){
@@ -15,4 +18,5 @@ public class MyThread implements Runnable {
 		ArticleBillCombiner.main(args);
 	}
 
+	*/
 }

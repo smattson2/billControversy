@@ -4,6 +4,10 @@ import java.util.LinkedHashMap;
 
 public class RelatedBillMerger {
 	
+	//DEPRECATED
+	
+	/*
+	
 	//private boolean deleteThisBill = false;
 	private final Bill bill;
 	private final LinkedHashMap<String, Bill> billMap;
@@ -113,6 +117,8 @@ public class RelatedBillMerger {
 		//Should be done already, by the Library of Congress.
 		otherBill.setShouldRemove(true);
 	}
+	
+	*/
 	
 }
 

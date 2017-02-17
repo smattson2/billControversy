@@ -1,7 +1,10 @@
 package ArticleFetcher;
 
 public class Master {
+	
+	//DEPRECATED
 
+	/*
 	private static final int FIRST_GOVTRACK_CONGRESS = 93;
 	private static final int FIRST_FULLTEXT_CONGRESS = 97;
 	private static final int CURRENT_CONGRESS = 114;
@@ -15,5 +18,7 @@ public class Master {
 		}
 
 	}
+	
+	*/
 
 }
